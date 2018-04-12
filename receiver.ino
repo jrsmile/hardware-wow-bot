@@ -1,10 +1,10 @@
 /*
-
+  Serial Controlled Keyboard Example
 */
 #define HWSERIAL Serial1
 #include "Keyboard.h"
 unsigned long baud = 31250;
-String inputString = "";         // a String to hold incoming data
+String str = "";         // a String to hold incoming data
 boolean stringComplete = false;  // whether the string is complete
 
 void setup() {
@@ -15,13 +15,15 @@ void setup() {
    // initialize control over the keyboard:
    Keyboard.begin();
    Mouse.screenSize(3840, 2160);  // configure screen size (4k ex.)
-   inputString.reserve(200); // reserve 200 bytes for the inputString:
+   HWSERIAL.print("setup done");
 }
 
 void loop() {
-   serialEvent();
-  if (stringComplete) {
-   String str = inputString;
+  while(!HWSERIAL.available());
+  if (HWSERIAL.available()) {
+   str = HWSERIAL.readStringUntil('\n');
+    HWSERIAL.println("got a string:");
+    HWSERIAL.println(str);
     if (str == "KEY_A") {
       Keyboard.press('a');
     } else if (str == "KEY_B") {
@@ -29,7 +31,7 @@ void loop() {
     } else if (str == "KEY_C") {
       Keyboard.press('c');
     } else if (str == "KEY_D") {
-      Keyboard.press('D');
+      Keyboard.press('d');
     } else if (str == "KEY_E") {
       Keyboard.press('e');
     } else if (str == "KEY_F") {
@@ -94,10 +96,6 @@ void loop() {
       Keyboard.press('9');
     } else if (str == "KEY_0") {
       Keyboard.press('0');
-    } else if (str == "KEY_ß") {
-      Keyboard.press('ß');
-    } else if (str == "KEY_adg") {
-      Keyboard.press('´');
     } else if (str == "KEY_LEFT_CTRL") {
       Keyboard.press(KEY_LEFT_CTRL);
     } else if (str == "KEY_LEFT_SHIFT") {
@@ -131,24 +129,13 @@ void loop() {
     } else if (str == "KEY_RELEASE_ALL") {
       Keyboard.releaseAll();
     } else if (str == "MOUSE_CLICK_LEFT") {
-      Mouse.press(MOUSE_LEFT);
+      Mouse.click(MOUSE_LEFT);
     } else if (str == "MOUSE_CLICK_RIGHT") {
-      Mouse.press(MOUSE_RIGHT);
+      Mouse.click(MOUSE_RIGHT);
+    } else if (str == "MOUSE_RELEASE") {
+      Mouse.release();
     } else {
-      Keyboard.releaseAll();
-    }
-    // clear the string:
-    inputString = "";
-    stringComplete = false;
-  }
-}
-
-void serialEvent() {
-  while (Serial.available()) {
-    char inChar = (char)Serial.read();
-    inputString += inChar;
-    if (inChar == '\n') {
-      stringComplete = true;
+      // Keyboard.releaseAll();
     }
   }
 }
