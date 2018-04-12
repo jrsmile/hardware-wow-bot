@@ -1,98 +1,142 @@
 #include 'CommMG.au3'
 Global $sportSetError
-ConsoleWrite(_CommListPorts() & @CRLF)
-$COMPort = 15
+$tset = _ComGetPortNames()
+for $i = 0 to UBound($tset) -1
+   if $tset[$i][1] = "Serielles USB-Gerät" Then
+	  $COMPort = StringTrimLeft($tset[$i][0],3)
+	  ConsoleWrite("Teensy an Port COM" & $COMPort & " gefunden!" & @CRLF)
+   EndIf
+Next
 $resOpen = _CommSetPort($COMPort,$sportSetError,31250, 8,0,1,0,0,0)
 if $resOpen = 0 then
    ConsoleWrite($sportSetError & @LF)
    Exit
 EndIf
 
-
 while True
    Sleep(random(2000,2500,1))
    while WinActive("World of Warcraft")
-	  _CommSendByte(11,1) ; TAB
-	  _CommSendByte(255,1) ; Release
-	  Sleep(random(150,250,1))
-	  _CommSendString("2") ; 2
-	  _CommSendByte(255,1) ; Release
-	  Sleep(random(1100,1200,1))
+	  _CommSendString("KEY_UP_ARROW" & @LF)
+	  Sleep(random(250,500,1))
+	  _CommSendString("KEY_RELEASE_ALL" & @LF)
+	  Sleep(random(250,500,1))
+	  _CommSendString("KEY_DOWN_ARROW" & @LF)
+	  Sleep(random(250,500,1))
+	  _CommSendString("KEY_RELEASE_ALL" & @LF)
+;~ 	  _CommSendString("MOUSE_CLICK_RIGHT" & @LF)
+	  Sleep(random(2000,2500,1))
    WEnd
    Sleep(10)
 WEnd
 
-#comments-start
-
-Dec  Char                           Dec  Char     Dec  Char     Dec  Char
----------                           ---------     ---------     ----------
-  0  NUL (null)                      32  SPACE     64  @         96  `
-  1  SOH (start of heading)          33  !         65  A         97  a
-  2  STX (start of text)             34  "         66  B         98  b
-  3  ETX (end of text)               35  #         67  C         99  c
-  4  EOT (end of transmission)       36  $         68  D        100  d
-  5  ENQ (enquiry)                   37  %         69  E        101  e
-  6  ACK (acknowledge)               38  &         70  F        102  f
-  7  BEL (bell)                      39  '         71  G        103  g
-  8  BS  (backspace)                 40  (         72  H        104  h
-  9  TAB (horizontal tab)            41  )         73  I        105  i
- 10  LF  (NL line feed, new line)    42  *         74  J        106  j
- 11  VT  (vertical tab)              43  +         75  K        107  k
- 12  FF  (NP form feed, new page)    44  ,         76  L        108  l
- 13  CR  (carriage return)           45  -         77  M        109  m
- 14  SO  (shift out)                 46  .         78  N        110  n
- 15  SI  (shift in)                  47  /         79  O        111  o
- 16  DLE (data link escape)          48  0         80  P        112  p
- 17  DC1 (device control 1)          49  1         81  Q        113  q
- 18  DC2 (device control 2)          50  2         82  R        114  r
- 19  DC3 (device control 3)          51  3         83  S        115  s
- 20  DC4 (device control 4)          52  4         84  T        116  t
- 21  NAK (negative acknowledge)      53  5         85  U        117  u
- 22  SYN (synchronous idle)          54  6         86  V        118  v
- 23  ETB (end of trans. block)       55  7         87  W        119  w
- 24  CAN (cancel)                    56  8         88  X        120  x
- 25  EM  (end of medium)             57  9         89  Y        121  y
- 26  SUB (substitute)                58  :         90  Z        122  z
- 27  ESC (escape)                    59  ;         91  [        123  {
- 28  FS  (file separator)            60  <         92  \        124  |
- 29  GS  (group separator)           61  =         93  ]        125  }
- 30  RS  (record separator)          62  >         94  ^        126  ~
- 31  US  (unit separator)            63  ?         95  _        127  DEL
-
-Key	Hexadecimal value	Decimal value << use this
-KEY_LEFT_CTRL	0x80	128
-KEY_LEFT_SHIFT	0x81	129
-KEY_LEFT_ALT	0x82	130
-KEY_LEFT_GUI	0x83	131
-KEY_RIGHT_CTRL	0x84	132
-KEY_RIGHT_SHIFT	0x85	133rr
-KEY_RIGHT_ALT	0x86	134
-KEY_RIGHT_GUI	0x87	135
-KEY_UP_ARROW	0xDA	218
-KEY_DOWN_ARROW	0xD9	217
-KEY_LEFT_ARROW	0xD8	216
-KEY_RIGHT_ARROW	0xD7	215
-KEY_BACKSPACE	0xB2	178
-KEY_TAB	0xB3	179
-KEY_RETURN	0xB0	176
-KEY_ESC	0xB1	177
-KEY_INSERT	0xD1	209
-KEY_DELETE	0xD4	212
-KEY_PAGE_UP	0xD3	211
-KEY_PAGE_DOWN	0xD6	214
-KEY_HOME	0xD2	210
-KEY_END	0xD5	213
-KEY_CAPS_LOCK	0xC1	193
-KEY_F1	0xC2	194
-KEY_F2	0xC3	195
-KEY_F3	0xC4	196
-KEY_F4	0xC5	197
-KEY_F5	0xC6	198
-KEY_F6	0xC7	199
-KEY_F7	0xC8	200
-KEY_F8	0xC9	201
-KEY_F9	0xCA	202
-KEY_F10	0xCB	203
-KEY_F11	0xCC	204
-KEY_F12	0xCD	205
-#comments-end
+#cs
+if (str == "KEY_A") {
+      Keyboard.press('a');
+    } else if (str == "KEY_B") {
+      Keyboard.press('b');
+    } else if (str == "KEY_C") {
+      Keyboard.press('c');
+    } else if (str == "KEY_D") {
+      Keyboard.press('d');
+    } else if (str == "KEY_E") {
+      Keyboard.press('e');
+    } else if (str == "KEY_F") {
+      Keyboard.press('f');
+    } else if (str == "KEY_G") {
+      Keyboard.press('g');
+    } else if (str == "KEY_H") {
+      Keyboard.press('h');
+    } else if (str == "KEY_I") {
+      Keyboard.press('i');
+    } else if (str == "KEY_J") {
+      Keyboard.press('j');
+    } else if (str == "KEY_K") {
+      Keyboard.press('k');
+    } else if (str == "KEY_L") {
+      Keyboard.press('l');
+    } else if (str == "KEY_M") {
+      Keyboard.press('m');
+    } else if (str == "KEY_N") {
+      Keyboard.press('n');
+    } else if (str == "KEY_O") {
+      Keyboard.press('o');
+    } else if (str == "KEY_P") {
+      Keyboard.press('p');
+    } else if (str == "KEY_Q") {
+      Keyboard.press('q');
+    } else if (str == "KEY_R") {
+      Keyboard.press('r');
+    } else if (str == "KEY_S") {
+      Keyboard.press('s');
+    } else if (str == "KEY_T") {
+      Keyboard.press('t');
+    } else if (str == "KEY_U") {
+      Keyboard.press('u');
+    } else if (str == "KEY_V") {
+      Keyboard.press('v');
+    } else if (str == "KEY_W") {
+      Keyboard.press('w');
+    } else if (str == "KEY_X") {
+      Keyboard.press('x');
+    } else if (str == "KEY_Y") {
+      Keyboard.press('y');
+    } else if (str == "KEY_Z") {
+      Keyboard.press('z');
+    } else if (str == "KEY_1") {
+      Keyboard.press('1');
+    } else if (str == "KEY_2") {
+      Keyboard.press('2');
+    } else if (str == "KEY_3") {
+      Keyboard.press('3');
+    } else if (str == "KEY_4") {
+      Keyboard.press('4');
+    } else if (str == "KEY_5") {
+      Keyboard.press('5');
+    } else if (str == "KEY_6") {
+      Keyboard.press('6');
+    } else if (str == "KEY_7") {
+      Keyboard.press('7');
+    } else if (str == "KEY_8") {
+      Keyboard.press('8');
+    } else if (str == "KEY_9") {
+      Keyboard.press('9');
+    } else if (str == "KEY_0") {
+      Keyboard.press('0');
+    } else if (str == "KEY_LEFT_CTRL") {
+      Keyboard.press(KEY_LEFT_CTRL);
+    } else if (str == "KEY_LEFT_SHIFT") {
+      Keyboard.press(KEY_LEFT_SHIFT);
+    } else if (str == "KEY_LEFT_ALT") {
+      Keyboard.press(KEY_LEFT_ALT);
+    } else if (str == "KEY_LEFT_GUI") {
+      Keyboard.press(KEY_LEFT_GUI);
+    } else if (str == "KEY_RIGHT_CTRL") {
+      Keyboard.press(KEY_RIGHT_CTRL);
+    } else if (str == "KEY_RIGHT_SHIFT") {
+      Keyboard.press(KEY_RIGHT_SHIFT);
+    } else if (str == "KEY_RIGHT_ALT") {
+      Keyboard.press(KEY_RIGHT_ALT);
+    } else if (str == "KEY_RIGHT_GUI") {
+      Keyboard.press(KEY_RIGHT_GUI);
+    } else if (str == "KEY_UP_ARROW") {
+      Keyboard.press(KEY_UP_ARROW);
+    } else if (str == "KEY_DOWN_ARROW") {
+      Keyboard.press(KEY_DOWN_ARROW);
+    } else if (str == "KEY_LEFT_ARROW") {
+      Keyboard.press(KEY_LEFT_ARROW);
+    } else if (str == "KEY_RIGHT_ARROW") {
+      Keyboard.press(KEY_RIGHT_ARROW);
+    } else if (str == "KEY_TAB") {
+      Keyboard.press(KEY_TAB);
+    } else if (str == "KEY_RETURN") {
+      Keyboard.press(KEY_RETURN);
+    } else if (str == "KEY_ESC") {
+      Keyboard.press(KEY_ESC);
+    } else if (str == "KEY_RELEASE_ALL") {
+      Keyboard.releaseAll();
+    } else if (str == "MOUSE_CLICK_LEFT") {
+      Mouse.click(MOUSE_LEFT);
+    } else if (str == "MOUSE_CLICK_RIGHT") {
+      Mouse.click(MOUSE_RIGHT);
+    } else if (str == "MOUSE_RELEASE") {
+#ce
