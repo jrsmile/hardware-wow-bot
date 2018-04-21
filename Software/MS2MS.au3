@@ -8,11 +8,19 @@ If @error Then
 	Exit
 EndIf
 
+Local Const $sMailSlotNameMouse = "\\.\mailslot\Mouse2MS"
+Local $hMailSlot2 = _MailSlotCreate($sMailSlotNameMouse)
+Global $g2 = False
 While True
 	while WinActive("World of Warcraft")
 ;~ 	if getData("8A8F0200") <> 0 Then ConsoleWrite("GCD..." & @CRLF)
 ;~ 	if getData("048F2700") <> 0 Then ConsoleWrite("Moving..." & @CRLF)
 ;~ 	if getData("07078F00") <> 0 Then ConsoleWrite("Casting..." & @CRLF)
+	$iSize2 = _MailSlotCheckForNextMessage($hMailSlot2)
+	$sdata2 = ""
+	$sData2 = _MailSlotRead($hMailSlot2, $iSize2, 1)
+	if $sdata2 = "g2" Then $g2 = not $g2
+
 	if ready2Cast() Then
 		_MailSlotWrite($sMailSlotNameSend, "KEY_2")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
@@ -21,15 +29,15 @@ While True
 		_MailSlotWrite($sMailSlotNameSend, "KEY_1")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
-	if ready2Cast() Then
+	if ready2Cast() and not isMoving() Then
 		_MailSlotWrite($sMailSlotNameSend, "KEY_3")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
-	if ready2Cast() Then
+	if ready2Cast() and not isMoving()  Then
 		_MailSlotWrite($sMailSlotNameSend, "KEY_3")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
-	if ready2Cast() Then
+	if ready2Cast() and not isMoving()  Then
 		_MailSlotWrite($sMailSlotNameSend, "KEY_3")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
@@ -37,7 +45,7 @@ While True
 		_MailSlotWrite($sMailSlotNameSend, "KEY_4")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
-	if ready2Cast() Then
+	if ready2Cast() and not isMoving()  Then
 		_MailSlotWrite($sMailSlotNameSend, "KEY_6")
 		_MailSlotWrite($sMailSlotNameSend, "KEY_RELEASE_ALL")
 	EndIf
@@ -47,7 +55,7 @@ While True
 WEnd
 
 func ready2Cast()
-	if not onGCD() and not isCasting() and WinActive("World of Warcraft") then Return True
+	if not onGCD() and not isCasting() and WinActive("World of Warcraft") and $g2 then Return True
 	return False
 EndFunc
 
@@ -58,6 +66,16 @@ func isCasting()
 		Return False
 	EndIf
 EndFunc
+
+func isMoving()
+	if getData("048F2700") <> 0 then
+		Return True
+	Else
+		Return False
+	EndIf
+EndFunc
+
+
 func onGCD()
 	if getData("8A8F0200") <> 0 then
 		Return True
@@ -75,7 +93,7 @@ Func getData($color)
 	Local $iSize = _MailSlotCheckForNextMessage($hMailSlot)
 	Local $sData = _MailSlotRead($hMailSlot, $iSize, 1)
 	_MailSlotClose($hMailSlot)
-	ToolTip($sData)
+;~ 	ToolTip($sData)
 	Local $aData = StringSplit($sData, @CRLF, 1)
 	For $i = 1 To $aData[0]
 ;~ 		ConsoleWrite($aData[$i] &  @CRLF)
@@ -91,4 +109,3 @@ EndFunc   ;==>getData
 ;8A8F0200 ; GCD
 ;048F2700 ; moving
 ;07078F00 ; casting
-
