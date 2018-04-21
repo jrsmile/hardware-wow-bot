@@ -9,24 +9,8 @@
 #include <WinAPIMisc.au3>
 #include <WinAPISys.au3>
 #include <WindowsConstants.au3>
-#include "CommMG.au3"
-;~ $mgdebug = True
-Global $sportSetError
-$tset = _ComGetPortNames()
-For $i = 0 To UBound($tset) - 1
-	If $tset[$i][1] = "Serielles USB-Gerät" Then
-		$COMPort = StringTrimLeft($tset[$i][0], 3)
-		ConsoleWrite("Teensy an Port COM" & $COMPort & " gefunden!" & @CRLF)
-	EndIf
-Next
-$resOpen = _CommSetPort($COMPort, $sportSetError, 31250, 8, 0, 1, 0, 0, 0)
-If $resOpen = 0 Then
-	ConsoleWrite($sportSetError & @LF)
-   Exit
-EndIf
-
-Global $g2_toogle = False
-AdlibRegister("g2_proc",1000)
+#include "MailSlot.au3"
+Global Const $sMailSlotName = "\\.\mailslot\Mouse2MS"
 
 $atagRID_DEVICE_INFO_HID = 'struct;dword VendorId;dword ProductId;dword VersionNumber;ushort UsagePage;ushort Usage;endstruct'
 $atagRID_INFO_HID = 'dword Size;dword Type;' & $atagRID_DEVICE_INFO_HID & ';dword Unused[2]'
@@ -211,54 +195,51 @@ EndFunc   ;==>WM_INPUT
 
 Func g1()
 	ConsoleWrite("g1" & @CRLF)
-	_CommSendString("KEY_TAB" & @LF)
-	Sleep(Random(50, 100, 1))
-	_CommSendString("KEY_RELEASE_ALL" & @LF)
-	Sleep(Random(50, 100, 1))
-	_CommSendString("KEY_2" & @LF)
-	Sleep(Random(50, 100, 1))
-	_CommSendString("KEY_RELEASE_ALL" & @LF)
+	_MailSlotWrite($sMailSlotName, "g1")
 EndFunc   ;==>g1
 
 Func g2()
 	ConsoleWrite("g2" & @CRLF)
-	$g2_toogle = not $g2_toogle
+	_MailSlotWrite($sMailSlotName, "g2")
 EndFunc   ;==>g2
-Func g2_proc()
-	if $g2_toogle then
-		g1()
-		Sleep(Random(50, 100, 1))
-		_CommSendString("MOUSE_CLICK_RIGHT" & @LF)
-	EndIf
-EndFunc
 
 Func g3()
 	ConsoleWrite("g3" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g3")
 EndFunc   ;==>g3
 Func g4()
 	ConsoleWrite("g4" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g4")
 EndFunc   ;==>g4
 Func g5()
 	ConsoleWrite("g5" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g5")
 EndFunc   ;==>g5
 Func g6()
 	ConsoleWrite("g6" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g6")
 EndFunc   ;==>g6
 Func g7()
 	ConsoleWrite("g7" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g7")
 EndFunc   ;==>g7
 Func g8()
 	ConsoleWrite("g8" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g8")
 EndFunc   ;==>g8
 Func g9()
 	ConsoleWrite("g9" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g9")
 EndFunc   ;==>g9
 Func g10()
 	ConsoleWrite("g10" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g10")
 EndFunc   ;==>g10
 Func g11()
 	ConsoleWrite("g11" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g11")
 EndFunc   ;==>g11
 Func g12()
 	ConsoleWrite("g12" & @CRLF)
+	_MailSlotWrite($sMailSlotName, "g12")
 EndFunc   ;==>g12
