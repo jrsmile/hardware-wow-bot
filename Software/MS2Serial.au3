@@ -33,7 +33,7 @@ While True
 	Local $iSize = _MailSlotCheckForNextMessage($hMailSlot)
 	Local $sData = _MailSlotRead($hMailSlot, $iSize, 1)
 	_CommSendString($sData & @LF)
-	Sleep(Random(50, 100, 1))
+	Sleep(Random(10, 20, 1))
 WEnd
 _MailSlotClose($hMailSlot)
 
